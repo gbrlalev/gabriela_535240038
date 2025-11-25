@@ -75,11 +75,11 @@ export default function ExplorePage() {
       isbn: book.volumeInfo.industryIdentifiers?.[0]?.identifier || null,
       publishYear: publishYear,
       pages: pages,
-      rating: null, // Jangan kirim string kosong
-      review: null  // Jangan kirim string kosong
+      rating: null,
+      review: null
     };
 
-    console.log('Sending book data:', bookData); // 👈 Debug log
+    console.log('Sending book data:', bookData);
 
     const res = await fetch('/api/books', {
       method: 'POST',
@@ -95,7 +95,7 @@ export default function ExplorePage() {
     }
 
     const result = await res.json();
-    console.log('Book added:', result); // 👈 Debug log
+    console.log('Book added:', result);
     
     alert('✅ Book added to your library!');
   } catch (error: any) {
