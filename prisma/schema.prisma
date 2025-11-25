@@ -4,6 +4,7 @@ generator client {
 
 datasource db {
   provider = "sqlite"
+  url      = env("DATABASE_URL")
 }
 
 model Book {
@@ -11,9 +12,9 @@ model Book {
   title       String
   author      String
   description String?
-  rating      Int?
-  status      String
-  review      String?
+  rating      Int?     // Rating 1-5
+  status      String   // "want-to-read", "currently-reading", "read"
+  review      String?  // Review pribadi user
   coverUrl    String?
   isbn        String?
   publishYear Int?
