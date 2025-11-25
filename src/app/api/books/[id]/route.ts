@@ -1,12 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
+type Props = {
+  params: Promise<{ id: string }>
+}
+
 // GET - Ambil 1 buku by ID
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  props: Props
 ) {
   try {
+    const params = await props.params;
     const book = await prisma.book.findUnique({
       where: { id: parseInt(params.id) }
     });
@@ -30,9 +35,10 @@ export async function GET(
 // PUT - Update buku
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  props: Props
 ) {
   try {
+    const params = await props.params;
     const body = await request.json();
     const book = await prisma.book.update({
       where: { id: parseInt(params.id) },
@@ -61,9 +67,10 @@ export async function PUT(
 // DELETE - Hapus buku
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  props: Props
 ) {
   try {
+    const params = await props.params;
     await prisma.book.delete({
       where: { id: parseInt(params.id) }
     });

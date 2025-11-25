@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, use } from 'react'; // Import 'use'
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
@@ -20,18 +20,22 @@ interface Book {
   updatedAt: string;
 }
 
-export default function BookDetailPage({ params }: { params: { id: string } }) {
+export default function BookDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params);
+
   const [book, setBook] = useState<Book | null>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
-    fetchBook();
-  }, []);
+    if (id) {
+      fetchBook(id);
+    }
+  }, [id]);
 
-  const fetchBook = async () => {
+  const fetchBook = async (bookId: string) => {
     try {
-      const res = await fetch(`/api/books/${params.id}`);
+      const res = await fetch(`/api/books/${bookId}`);
       if (res.ok) {
         const data = await res.json();
         setBook(data);
@@ -48,7 +52,7 @@ export default function BookDetailPage({ params }: { params: { id: string } }) {
   const handleDelete = async () => {
     if (confirm('Are you sure you want to delete this book?')) {
       try {
-        await fetch(`/api/books/${params.id}`, { method: 'DELETE' });
+        await fetch(`/api/books/${id}`, { method: 'DELETE' });
         router.push('/books');
       } catch (error) {
         console.error('Error deleting book:', error);

@@ -1,10 +1,12 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, use } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
-export default function EditBookPage({ params }: { params: { id: string } }) {
+export default function EditBookPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params);
+
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -22,12 +24,14 @@ export default function EditBookPage({ params }: { params: { id: string } }) {
   });
 
   useEffect(() => {
-    fetchBook();
-  }, []);
+    if (id) {
+      fetchBook(id);
+    }
+  }, [id]);
 
-  const fetchBook = async () => {
+  const fetchBook = async (bookId: string) => {
     try {
-      const res = await fetch(`/api/books/${params.id}`);
+      const res = await fetch(`/api/books/${bookId}`);
       if (res.ok) {
         const data = await res.json();
         setFormData({
@@ -62,14 +66,14 @@ export default function EditBookPage({ params }: { params: { id: string } }) {
     setSaving(true);
 
     try {
-      const res = await fetch(`/api/books/${params.id}`, {
+      const res = await fetch(`/api/books/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData)
       });
 
       if (res.ok) {
-        router.push(`/books/${params.id}`);
+        router.push(`/books/${id}`);
       } else {
         alert('Failed to update book');
       }
@@ -97,7 +101,7 @@ export default function EditBookPage({ params }: { params: { id: string } }) {
         <div className="col-md-8">
           <div className="d-flex justify-content-between align-items-center mb-4">
             <h1 className="h2">✏️ Edit Book</h1>
-            <Link href={`/books/${params.id}`} className="btn btn-outline-secondary">
+            <Link href={`/books/${id}`} className="btn btn-outline-secondary">
               ← Back to Detail
             </Link>
           </div>
